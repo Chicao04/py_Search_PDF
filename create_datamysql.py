@@ -2,6 +2,7 @@ import pdfplumber
 import csv
 import re
 import mysql.connector
+from mysql.connector import Error
 
 # Đường dẫn đến file PDF của bạn
 pdf_path = 'C:/Users/FPTSHOP/PycharmProjects/testuts/Search_PDF/file/tt.pdf'
@@ -15,25 +16,63 @@ def fix_currency(value):
             return value
     return value
 
+
+def create_database(database_name):
+    try:
+        # Kết nối đến MySQL (kết nối với một cơ sở dữ liệu hiện tại, hoặc sử dụng MySQL server không yêu cầu cơ sở dữ liệu cụ thể)
+        connection = mysql.connector.connect(
+            host='20.198.254.148',
+            port=3306,
+            user='root',
+            password='dPfLnZqwt8Kg',
+        )
+
+        if connection.is_connected():
+            print("Kết nối MySQL thành công!")
+
+            # Tạo đối tượng cursor
+            cursor = connection.cursor()
+
+            # Tạo cơ sở dữ liệu mới
+            create_database_query = f"CREATE DATABASE IF NOT EXISTS {database_name}"
+            cursor.execute(create_database_query)
+            print(f"Cơ sở dữ liệu '{database_name}' đã được tạo thành công hoặc đã tồn tại.")
+
+            # Đóng cursor và kết nối
+            cursor.close()
+            connection.close()
+            print("Đã ngắt kết nối MySQL.")
+
+    except Error as e:
+        print(f"Lỗi: {e}")
+
+
+# Tạo cơ sở dữ liệu với tên 'my_new_database'
+create_database('Var_phong_bat_database')
+
+
 # Kết nối đến MySQL
 connection = mysql.connector.connect(
-    host='localhost',        # Địa chỉ máy chủ MySQL
-    user='root',             # Tên người dùng MySQL
-    password='',# Mật khẩu MySQL
-    database='your_database' # Tên cơ sở dữ liệu MySQL
+    # host='localhost',
+    # user='root',
+    # password='',
+    host='20.198.254.148',
+    port=3306,
+    user='root',
+    password='dPfLnZqwt8Kg',
+    database='Var_phong_bat_database'
 )
 
 cursor = connection.cursor()
 
 # Tạo bảng nếu chưa tồn tại (nếu cần)
 create_table_query = """
-CREATE TABLE IF NOT EXISTS your_table (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    col1 VARCHAR(255),
-    col2 VARCHAR(255),
-    col3 VARCHAR(255),
-    col4 int,
-    col5 VARCHAR(255)
+CREATE TABLE IF NOT EXISTS table_view (
+    number INT PRIMARY KEY,
+    day VARCHAR(255),
+    content VARCHAR(255),
+    money int,
+    people VARCHAR(255)
 )
 """
 cursor.execute(create_table_query)
@@ -50,7 +89,7 @@ with pdfplumber.open(pdf_path) as pdf:
                     extracted_data.append(new_row)
 
 # Lưu dữ liệu vào MySQL
-insert_query = "INSERT INTO your_table (col1, col2, col3, col4, col5) VALUES (%s, %s, %s, %s, %s)"
+insert_query = "INSERT INTO table_view (number, day, content, money, people) VALUES (%s, %s, %s, %s, %s)"
 for row in extracted_data:
     # Giả sử bạn có 5 cột, thay đổi nếu cần
     if len(row) >= 5:  # Đảm bảo mỗi hàng có đủ 5 cột
