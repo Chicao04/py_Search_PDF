@@ -39,7 +39,7 @@ with pdfplumber.open(pdf_path) as pdf:
                     extracted_data.append(new_row)
 
 # Ghi dữ liệu đã trích xuất ra file CSV
-csv_output_path = r'C:/Users/FPTSHOP/PycharmProjects/testuts/Search_PDF/file/Book2.csv'  # Sửa đường dẫn bằng chuỗi thô
+csv_output_path = r'C:/Users/FPTSHOP/PycharmProjects/testuts/Search_PDF/file/Var_phongbat.csv'  # Sửa đường dẫn bằng chuỗi thô
 
 with open(csv_output_path, mode='w', newline='', encoding='utf-8') as file:
     writer = csv.writer(file)
